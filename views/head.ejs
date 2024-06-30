@@ -38,22 +38,14 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <div class="navbar-nav">
+        <a class="nav-item nav-link" href="/">Home</a>
         <a class="nav-item nav-link" href="/login">Login</a>
+        <a class="nav-item nav-link" href="/signup">Signup Form</a>
         <a class="nav-item nav-link" href="/status">Status</a>
-        <% if (user) { %>
-          <a class="nav-item nav-link" href="/signup">Signup Form</a>
-          <a class="nav-item nav-link" href="/resource">Resource</a>
-          <a class="nav-item nav-link" href="/">Items</a>
-          <a class="nav-item nav-link" href="/">Create Items</a>
-          <a class="nav-item nav-link" href="/">Edit Items</a>
-          <a class="nav-item nav-link" href="/logout">Logout</a>
-         <% } %>
-    
-          <% if (!user) { %>
-            <a class="nav-item nav-link" href="/">Home</a>
-            
-           <% } %>
-  
+        <a class="nav-item nav-link" href="/items">Items</a>
+        <a class="nav-item nav-link" href="/items/create">Create and Edit Items</a>
+        <a class="nav-item nav-link" href="/resource">Resource</a>
+        <a class="nav-item nav-link" href="/logout">Logout</a>
 
       </div>
     </div>

@@ -9,6 +9,7 @@
 module.exports = { 
     isAuth: (req, res, next) => { // Middleware to check if user is authenticated
         if (req.isAuthenticated()) {
+            //res.locals.user = req.user;
             next();
         } else {
             req.session.returnTo = req.originalUrl;

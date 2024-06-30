@@ -16,11 +16,11 @@ async function dbConnect() {
 dbConnect().catch(err => console.error(err));
 
 const userSchema = new mongoose.Schema({
-    googleId: String,
-    displayName: String,
-    email: String,
-    accessToken: String,
-    expiryDate: String,
+    googleId: String, 
+    displayName: String, 
+    email: String, 
+    accessToken: String, 
+    expiryDate: String,  
     handle: Buffer, 
 });
 

@@ -6,7 +6,7 @@ const uuid = require('uuid').v4;
 const User = require('../models/User');
 const SessionChallengeStore = require('passport-fido2-webauthn').SessionChallengeStore;
 const store = new SessionChallengeStore();
-
+const Item = require('../models/Item');
 
 router.get('/home'), (req, res) => {
   res.redirect('/');
@@ -146,5 +146,120 @@ router.get('/auth/google/callback',
     });
   });
    
+
+
+///////////// here is the code for the items routes
+
+
+
+// Items list route
+router.get('/items', isAuth, async (req, res) => {
+    const items = await Item.find().populate('createdBy').exec();
+    res.render('items', {
+        items: items,
+        user: req.user
+    });
+});
+
+// Create item route (POST)
+router.post('/items/create', isAuth, async (req, res) => {
+    console.log('Request Body:', req.body);
+
+    const { title, description } = req.body;
+
+    // Check if title and description are present in the request body
+    if (!title || !description) {
+        return res.status(400).send('Title and description are required');
+    }
+
+    try {
+        const newItem = new Item({
+            title,
+            description,
+            dataCreation: new Date(),
+            createdBy: req.user._id
+        });
+        await newItem.save();
+        res.redirect('/items'); // Redirect to the items list page
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Create item form route (GET)
+router.get('/items/create', isAuth, async (req, res) => {
+    try {
+        const items = await Item.find().populate('createdBy').exec();
+        res.render('itemsCreate', { items: items,
+          user: req.user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Delete item confirmation route (GET)
+router.get('/items/:id/delete', isAuth, async (req, res) => {
+    try {
+        const itemId = req.params.id;
+        const item = await Item.findById(itemId); // Find item by ID
+        if (!item) {
+            return res.status(404).send('Item not found');
+        }
+        res.render('confirmDelete', { item: item, 
+          user: req.user }); // Render confirmation page
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Delete item route (POST)
+router.post('/items/:id/delete', isAuth, async (req, res) => {
+    try {
+        const itemId = req.params.id;
+        await Item.findByIdAndDelete(itemId); 
+        res.redirect('/items'); 
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Edit item form route (GET)
+router.get('/items/:id/edit', isAuth, async (req, res) => {
+    try {
+        const itemId = req.params.id;
+        const item = await Item.findById(itemId);
+        if (!item) {
+            return res.status(404).send('Item not found');
+        }
+        res.render('editItem', { item: item,
+          user: req.user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Edit item route (POST)
+router.post('/items/:id/edit', isAuth, async (req, res) => {
+    try {
+        const itemId = req.params.id;
+        const { title, description} = req.body;
+        await Item.findByIdAndUpdate(itemId, { title, description});
+        res.redirect('/items');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
+
+
+
+
 
 module.exports = router;

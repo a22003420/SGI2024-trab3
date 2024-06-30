@@ -16,7 +16,7 @@ async function dbConnect() {
 dbConnect().catch(err => console.error(err));
 
 const CredentialsSchema = new mongoose.Schema({
-  googleId: { type: Buffer, required: true },  // should be a Buffer not a String!!! not working with String type
+  googleId: { type: Buffer, required: true },  // should be a Buffer
   external_id: { type: String, required: true }, 
   public_key : { type: String, required: true } 
 });

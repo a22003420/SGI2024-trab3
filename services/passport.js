@@ -81,15 +81,15 @@ passport.use(new WebAuthnStrategy({ store: store }, async function verify(id, us
   console.log('Cred:', cred );
 
   const publicKey = cred.public_key;
-  let user = await User.findOne({ authKeyId: cred.googleId});
+  let user = await User.findOne({ googleId: cred.googleId});
 
   if (!user) {
     return cb(null, false, { message: 'Invalid user' });
   }
 
-  if (Buffer.compare(user.authKeyId, userHandle) != 0) {
-    return cb(null, false, { message: 'Invalid' });
-  }
+  // if (Buffer.compare(user.handle, userHandle) != 0) {
+    // return cb(null, false, { message: 'Invalid' });
+  //}
 
   return cb(null, user, publicKey);
 }, async function register(user, id, publicKey, cb) {
@@ -97,12 +97,12 @@ passport.use(new WebAuthnStrategy({ store: store }, async function verify(id, us
   const findUser = await User.findOne({ email: user.name });
 
   if (findUser) {
-    findUser.displayName = user.displayName;
-    findUser.authKeyId = user.id;
+    //findUser.displayName = user.displayName;
+    findUser.handle = user.id;
     await findUser.save();
 
     await new Credentials({
-      googleId: findUser.authKeyId,
+      googleId: findUser.googleId,
       external_id: id,
       public_key: publicKey
     }).save();
